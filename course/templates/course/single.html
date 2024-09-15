@@ -15,6 +15,40 @@
             </div>
         </div>
     </div>
+     <style>
+        .form-check-inline {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 10px; /* Radiobutonlar orasidagi bo'shliq */
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-control.border-0 {
+            border: none;
+            border-radius: 0;
+        }
+        .form-control.file-input {
+            padding: 0;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .bg-secondary {
+            background-color: #f8f9fa;
+        }
+        .rounded {
+            border-radius: .25rem;
+        }
+        .p-5 {
+            padding: 3rem;
+        }
+    </style>
     <!-- Header End -->
 
 
@@ -24,22 +58,23 @@
             <div class="row">
                 <div class="col-lg-8">
                     <div class="mb-5">
-                        {% for blog in blogs %}
                         <h6 class="text-primary mb-3">{{ blog.updated_at }}</h6>
                         <h1 class="mb-5">{{ blog.title }}</h1>
                         <img class="img-fluid rounded w-100 mb-4" src="{{ blog.image.url }}" alt="Image">
                         <p>{{ blog.content }}</p>
-                        
-                        {% endfor %}
                     </div>
 
                     <!-- Comment List -->
                     <div class="mb-5">
                         <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;"></h3>
+                        <h3>Comments</h3>
                         {% for comment in comments %}
                         <div class="media mb-4">
-                            <img src="{{ comment.image.url }}" alt="Image" class="img-fluid rounded-circle mr-3 mt-1"
-                                style="width: 45px;">
+                         {% if comment.image %}
+            <img src="{{ comment.image.url }}" alt="Image" class="img-fluid rounded-circle mr-3 mt-1" style="width: 45px;">
+        {% else %}
+           
+        {% endif %} 
                             <div class="media-body">
                                 <h6>{{ comment.user }}<small><i>{{ comment.created_at }}</i></small></h6>
                                 <p>{{ comment.message }}</p>
@@ -51,41 +86,74 @@
                     </div>
 
                     <!-- Comment Form -->
-                    <div class="bg-secondary rounded p-5">
-                        <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Leave a comment</h3>
-                        <form>
-                            <div class="form-group">
-                                <label for="name">Name *</label>
-                                <input type="text" class="form-control border-0" id="name">
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email *</label>
-                                <input type="email" class="form-control border-0" id="email">
-                            </div>
-                            <div class="form-group">
-                                <label for="website">Website</label>
-                                <input type="url" class="form-control border-0" id="website">
-                            </div>
+<div class="bg-secondary rounded p-5">
+        <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Leave a comment</h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="user">Name *</label>
+                {{ comment_form.user.errors }}
+                <input type="text" class="form-control border-0" id="user" name="user" value="{{ comment_form.user.value }}" required>
+            </div>
+            <div class="form-group">
+                <label for="rating">Rating *</label>
+                {{ comment_form.rating.errors }}
+                <div class="form-check form-check-inline">
+                    {% for value, label in comment_form.fields.rating.widget.choices %}
+                        <input type="radio" class="form-check-input" id="rating{{ value }}" name="rating" value="{{ value }}" {% if comment_form.rating.value == value %}checked{% endif %}>
+                        <label class="form-check-label" for="rating{{ value }}">{{ label }}</label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="image">Image</label>
+                {{ comment_form.image.errors }}
+                <input type="file" class="form-control file-input" id="image" name="image">
+            </div>
+            <div class="form-group">
+                <label for="blog">Blog</label>
+                {{ comment_form.blog.errors }}
+                <select id="blog" name="blog" class="form-control border-0">
+                    {% for blog in blogs %}
+                        <option value="{{ blog.id }}" {% if comment_form.blog.value == blog.id %}selected{% endif %}>{{ blog.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="video">Video</label>
+                {{ comment_form.video.errors }}
+                <select id="video" name="video" class="form-control border-0">
+                    {% for video in videos %}
+                        <option value="{{ video.id }}" {% if comment_form.video.value == video.id %}selected{% endif %}>{{ video.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="message">Message *</label>
+                {{ comment_form.message.errors }}
+                <textarea id="message" cols="30" rows="5" class="form-control border-0" name="message" required>{{ comment_form.message.value }}</textarea>
+            </div>
+            <div class="form-group mb-0">
+                <input type="submit" value="Leave Comment" class="btn btn-primary py-md-2 px-md-4 font-weight-semi-bold">
+            </div>
+        </form>
+    </div>
 
-                            <div class="form-group">
-                                <label for="message">Message *</label>
-                                <textarea id="message" cols="30" rows="5" class="form-control border-0"></textarea>
-                            </div>
-                            <div class="form-group mb-0">
-                                <input type="submit" value="Leave Comment" class="btn btn-primary py-md-2 px-md-4 font-weight-semi-bold">
-                            </div>
-                        </form>
-                    </div>
+
+
+
+
+
+
                 </div>
 
                 <div class="col-lg-4 mt-5 mt-lg-0">
                     <!-- Author Bio -->
                     <div class="d-flex flex-column text-center bg-dark rounded mb-5 py-5 px-4">
-                        <img src="img/user.jpg" class="img-fluid rounded-circle mx-auto mb-3" style="width: 100px;">
-                        <h3 class="text-primary mb-3">John Doe</h3>
+                        <img src="{{ blog.author_image.url }}" class="img-fluid rounded-circle mx-auto mb-3" style="width: 100px;">
+                        <h4 class="text-primary mb-3">{{ blog.author_name }}</h4>
                         <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Tag Cloud</h3>
-                        <p class="text-white m-0">Conset elitr erat vero dolor ipsum et diam, eos dolor lorem, ipsum sit
-                            no ut est ipsum erat kasd amet elitr</p>
+                        <p class="text-white m-0">{{ blog.author_bio }}</p>
                     </div>
 
                     <!-- Search Form -->
@@ -102,56 +170,31 @@
                     </div>
 
                     <!-- Category List -->
-                    <div class="mb-5">
+                     <div class="mb-5">
                         <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Categories</h3>
                         <ul class="list-group list-group-flush">
+                            {% for category in categories_with_course_count %}
                             <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="" class="text-decoration-none h6 m-0">Web Design</a>
-                                <span class="badge badge-primary badge-pill">150</span>
+                                <a href="" class="text-decoration-none h6 m-0">{{ category.title }}</a>
+                                <span class="badge badge-primary badge-pill">{{ category.course_count }}</span>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="" class="text-decoration-none h6 m-0">Web Development</a>
-                                <span class="badge badge-primary badge-pill">131</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="" class="text-decoration-none h6 m-0">Online Marketing</a>
-                                <span class="badge badge-primary badge-pill">78</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="" class="text-decoration-none h6 m-0">Keyword Research</a>
-                                <span class="badge badge-primary badge-pill">56</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="" class="text-decoration-none h6 m-0">Email Marketing</a>
-                                <span class="badge badge-primary badge-pill">98</span>
-                            </li>
+                            {% endfor %}
+                        
                         </ul>
                     </div>
 
                     <!-- Recent Post -->
                     <div class="mb-5">
                         <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Recent Post</h3>
+                        {% for blog in blogs %}
                         <a class="d-flex align-items-center text-decoration-none mb-3" href="">
-                            <img class="img-fluid rounded" src="img/blog-80x80.jpg" alt="">
+                            <img class="img-fluid px-4" src="{{ blog.image.url }}" alt="" width="150" height="150">
                             <div class="pl-3">
-                                <h6 class="m-1">Diam lorem dolore justo eirmod lorem dolore</h6>
-                                <small>Jan 01, 2050</small>
+                                <h6 class="m-1">{{ blog.title }}</h6>
+                                <small>{{ blog.updated_at }}</small>
                             </div>
                         </a>
-                        <a class="d-flex align-items-center text-decoration-none mb-3" href="">
-                            <img class="img-fluid rounded" src="img/blog-80x80.jpg" alt="">
-                            <div class="pl-3">
-                                <h6 class="m-1">Diam lorem dolore justo eirmod lorem dolore</h6>
-                                <small>Jan 01, 2050</small>
-                            </div>
-                        </a>
-                        <a class="d-flex align-items-center text-decoration-none mb-3" href="">
-                            <img class="img-fluid rounded" src="img/blog-80x80.jpg" alt="">
-                            <div class="pl-3">
-                                <h6 class="m-1">Diam lorem dolore justo eirmod lorem dolore</h6>
-                                <small>Jan 01, 2050</small>
-                            </div>
-                        </a>
+                        {% endfor %}
                     </div>
 
                     <!-- Tag Cloud -->

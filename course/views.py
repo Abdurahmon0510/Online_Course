@@ -1,19 +1,32 @@
 from django.core.paginator import Paginator
 from django.db.models import Count, Sum
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 
 from course.models import Course, Category, Comment, Blog, Video
 from users.models import Teacher
 
+from django.shortcuts import render, get_object_or_404
+from django.views import View
+
+from .forms import CommentForm
+from .models import Category, Course
+
+
 class BaseView(View):
     def get(self, request, *args, **kwargs):
-        categories = Category.objects.all()
-        category1 = Category.objects.get(slug=kwargs['slug'])
-        courses = Course.objects.filter(category=category1)
 
-        return render(request,'course/base/base.html',{'categories':categories,'courses':courses,'category1':category1})
+        categories = Category.objects.all()
+        category1 = get_object_or_404(Category, slug=kwargs.get('slug'))
+        courses = category1.course.all()
+
+        return render(request, 'course/base/base.html', {
+            'categories': categories,
+            'courses': courses,
+            'category1': category1
+        })
 
 
 class TeacherView(View):
@@ -104,16 +117,62 @@ class BlogView(View):
 class ContactView(View):
       def get(self, request):
          return render(request, 'course/contact.html')
+
+
 class SingleView(View):
-      def get(self, request):
-          courses = Course.objects.all()
-          blogs = Blog.objects.annotate(comment_counts=Count('comment')).order_by('-updated_at')
-          comments = Comment.objects.all()
-          categories = Category.objects.all()
-          total_comments_count = Comment.objects.aggregate(total=Count('id'))['total']
-          context = {'blogs':blogs,'comments':comments,'categories':categories,'courses':courses,'total_comments_count':total_comments_count}
-          return render(request, 'course/single.html',context)
+    def get(self, request, id):
+        categories_with_course_count = Category.objects.annotate(course_count=Count('course'))
+        blog = get_object_or_404(Blog, id=id)
+        comments = Comment.objects.filter(blog=blog)
+        courses = Course.objects.all()
+        blogs = Blog.objects.annotate(comment_counts=Count('comment')).order_by('-updated_at')
+        categories = Category.objects.all()
+        total_comments_count = Comment.objects.aggregate(total=Count('id'))['total']
+        comment_form = CommentForm()
+        videos = Video.objects.all()
+
+        context = {
+            'blog': blog,
+            'comments': comments,
+            'courses': courses,
+            'blogs': blogs,
+            'categories': categories,
+            'total_comments_count': total_comments_count,
+            'categories_with_course_count': categories_with_course_count,
+            'comment_form': comment_form,
+            'videos': videos
+        }
+
+        return render(request, 'course/single.html', context)
+
+    def post(self, request, id):
+        blog = get_object_or_404(Blog, id=id)
+        comment_form = CommentForm(request.POST, request.FILES)
+        videos = Video.objects.all()
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.blog = blog
+            comment.save()
+            return redirect('single', id=blog.id)
 
 
+        categories_with_course_count = Category.objects.annotate(course_count=Count('course'))
+        comments = Comment.objects.filter(blog=blog)
+        courses = Course.objects.all()
+        blogs = Blog.objects.annotate(comment_counts=Count('comment')).order_by('-updated_at')
+        categories = Category.objects.all()
+        total_comments_count = Comment.objects.aggregate(total=Count('id'))['total']
 
+        context = {
+            'blog': blog,
+            'comments': comments,
+            'courses': courses,
+            'blogs': blogs,
+            'categories': categories,
+            'total_comments_count': total_comments_count,
+            'categories_with_course_count': categories_with_course_count,
+            'comment_form': comment_form,
+            'videos': videos
+        }
 
+        return render(request, 'course/single.html', context)

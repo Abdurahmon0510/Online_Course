@@ -22,7 +22,7 @@ class CategoryAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 @admin.register(Comment)
 class CommentAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     prepopulated_fields = {'slug': ('user',)}
-    fields = ['user', 'message', 'video', 'slug','rating', 'image']
+    fields = ['user', 'message', 'video', 'slug','rating', 'image','blog']
     list_display = ['user', 'message', 'video']
 
 
@@ -36,7 +36,7 @@ class VideoAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 @admin.register(Blog)
 class BlogAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
-    fields = ['title', 'content', 'image', 'author', 'slug','category','is_published','author_bio']
+    fields = ['title', 'content', 'image', 'author', 'slug','category','is_published','author_bio','author_name','author_image']
     list_display = ['title', 'author', 'slug', 'category', 'is_published']
 
 

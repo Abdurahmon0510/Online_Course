@@ -255,7 +255,11 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
                         <div class="text-center">
                             <i class="fa fa-3x fa-quote-left text-primary mb-4"></i>
                             <h4 class="font-weight-normal mb-4">{{ comment.message }}</h4>
-                            <img class="img-fluid mx-auto mb-3" src="{{ comment.image.url }}" alt="">
+                            {% if comment.image %}
+            <img src="{{ comment.image.url }}" alt="Image" class="img-fluid rounded-circle mr-3 mt-1"
+        {% else %}
+           
+        {% endif %}
                             <h5 class="m-0">{{ comment.name }}</h5>
                         </div>
                         {% endfor %}
@@ -280,7 +284,7 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
                 <div class="col-lg-4 mb-4">
                     <div class="blog-item position-relative overflow-hidden rounded mb-2">
                         <img class="img-fluid" src="{{ blog.image.url }}" alt="">
-                        <a class="blog-overlay text-decoration-none" href="">
+                        <a class="blog-overlay text-decoration-none" href="{% url 'single' id=blog.id %}">
                             <h5 class="text-white mb-3">{{ blog.title }}</h5>
                             <p class="text-primary m-0">{{ blog.updated_at }}</p>
                         </a>

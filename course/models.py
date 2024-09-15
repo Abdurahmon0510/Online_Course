@@ -38,7 +38,7 @@ class Course(BaseModel):
     price = models.FloatField()
     image = models.ImageField(upload_to='course/', blank=True, null=True)
     quantity = models.PositiveIntegerField(default=0, blank=True, null=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True,related_name='course')
     description = models.TextField()
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
     favourite = models.BooleanField(default=False)
@@ -126,6 +126,8 @@ class Blog(BaseModel):
     is_published = models.BooleanField(default=False)
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
     author_bio = models.TextField(null=True, blank=True)
+    author_name = models.TextField(null=True, blank=True)
+    author_image = models.ImageField(upload_to='blog_images/', blank=True, null=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -144,7 +146,7 @@ class Comment(BaseModel):
         five = 5
 
     message = models.TextField(null=True, blank=True)
-    video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='comments')
+    video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='comments',null=True,blank=True)
     user = models.CharField(max_length=100, null=True, blank=True)
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
     rating = models.PositiveIntegerField(choices=RatingChoices.choices, default=RatingChoices.zero)
