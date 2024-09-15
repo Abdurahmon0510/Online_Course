@@ -80,7 +80,7 @@
 <div class="navbar-nav w-100">
     {% for category in categories %}
         <div class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown{{ category.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+            <a href="{% url 'courses_with_slug' slug=category.slug %}" class="nav-link dropdown-toggle" id="navbarDropdown{{ category.id }}" data-bs-toggle="dropdown" aria-expanded="false">
                 {{ category.title }}
             </a>
             <div class="dropdown-menu position-absolute bg-secondary border-0 rounded-0 w-100 m-0" aria-labelledby="navbarDropdown{{ category.id }}">
@@ -231,7 +231,7 @@
                         <h5 class="text-primary text-uppercase mb-4" style="letter-spacing: 5px;">Our Courses</h5>
                         <div class="d-flex flex-column justify-content-start">
                             {% for category in categories %}
-                            <a class="text-white mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>{{ category.title }}</a>
+                            <a class="text-white mb-2" href="{% url 'courses_with_slug' slug=category.slug %}"><i class="fa fa-angle-right mr-2"></i>{{ category.title }}</a>
                             {% endfor %}
                            
                         </div>
@@ -247,7 +247,7 @@ We hope this message finds you well. At Najot Ta'lim, we are always striving to 
                     Don’t miss out on these valuable learning opportunities!</p>
                 <div class="w-100">
                     <div class="input-group">
-                        <input type="text" class="form-control border-dark" style="padding: 4px;" placeholder="Your Email Address">
+                        <input type="text" class="form-control border-dark" style="padding: 4px;" placeholder="Your Email Address" required>
                         <div class="input-group-append">
                             <div>
                                  <form action="{% url 'register' %}">

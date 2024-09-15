@@ -1,5 +1,5 @@
 from django import forms
-from .models import Course, Category, Comment
+from .models import Course, Category, Comment, Request
 
 
 class CourseForm(forms.ModelForm):
@@ -27,3 +27,8 @@ class CommentForm(forms.ModelForm):
         self.fields['blog'].widget.attrs.update({'class': 'form-control'})
         self.fields['video'].widget.attrs.update({'class': 'form-control'})
         self.fields['message'].widget.attrs.update({'class': 'form-control'})
+
+class RequestForm(forms.ModelForm):
+    class Meta:
+        model = Request
+        fields = ['name', 'email', 'subject', 'message']

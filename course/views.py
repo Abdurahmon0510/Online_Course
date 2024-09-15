@@ -3,7 +3,7 @@ from django.db.models import Count, Sum
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, FormView
 
 from course.models import Course, Category, Comment, Blog, Video
 from users.models import Teacher
@@ -11,7 +11,7 @@ from users.models import Teacher
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 
-from .forms import CommentForm
+from .forms import CommentForm, RequestForm
 from .models import Category, Course
 
 
@@ -19,13 +19,19 @@ class BaseView(View):
     def get(self, request, *args, **kwargs):
 
         categories = Category.objects.all()
-        category1 = get_object_or_404(Category, slug=kwargs.get('slug'))
-        courses = category1.course.all()
+        category_slug = request.GET.get('slug')
+
+        if category_slug:
+
+            category = get_object_or_404(Category, slug=category_slug)
+            courses = Course.objects.filter(category=category).annotate(comment_count=Count('videos__comments'))
+        else:
+
+            courses = Course.objects.all().annotate(comment_count=Count('videos__comments'))
 
         return render(request, 'course/base/base.html', {
             'categories': categories,
-            'courses': courses,
-            'category1': category1
+            'courses': courses
         })
 
 
@@ -35,7 +41,7 @@ class TeacherView(View):
         teachers = Teacher.objects.all()
         categories = Category.objects.all()
         courses = Course.objects.all()
-        context = {'teachers':teachers,'categories':categories,'courses':courses}
+        context = {'teachers': teachers, 'categories': categories, 'courses': courses}
         return render(request, 'users/teacher.html', context)
 
 
@@ -53,6 +59,7 @@ class CourseView(View):
         context = {'courses': courses, 'categories': categories, 'comments': comments}
         return render(request, 'course/courses.html', context)
 
+
 class IndexView(View):
     def get(self, request):
         category_slug = request.GET.get('slug')
@@ -64,7 +71,6 @@ class IndexView(View):
         else:
 
             courses = Course.objects.all().annotate(comment_count=Count('videos__comments'))
-
 
         blogs = Blog.objects.all()
         comments = Comment.objects.all()
@@ -83,6 +89,7 @@ class IndexView(View):
 
         return render(request, 'course/index.html', context)
 
+
 class CourseVideosView(ListView):
     model = Video
     template_name = 'course/course_videos.html'
@@ -92,6 +99,7 @@ class CourseVideosView(ListView):
         course = Course.objects.get(slug=self.kwargs['slug'])
         return course.videos.all()
 
+
 class VideoDetailView(DetailView):
     model = Video
     template_name = 'course/video_detail.html'
@@ -99,24 +107,34 @@ class VideoDetailView(DetailView):
 
 
 class AboutView(View):
-      def get(self, request):
-          comments = Comment.objects.all()
-          courses = Course.objects.all()
-          categories = Category.objects.all()
-          context = {'comments': comments, 'courses': courses, 'categories': categories}
-          return render(request, 'course/about.html',context)
+    def get(self, request):
+        comments = Comment.objects.all()
+        courses = Course.objects.all()
+        categories = Category.objects.all()
+        context = {'comments': comments, 'courses': courses, 'categories': categories}
+        return render(request, 'course/about.html', context)
+
+
 class BlogView(View):
-      def get(self, request):
-          categories_with_course_count = Category.objects.annotate(course_count=Count('course'))
-          blogs = Blog.objects.all().order_by('-updated_at')
-          categories = Category.objects.all()
-          paginator = Paginator(blogs, 2)
-          page_number = request.GET.get('page')
-          page_obj = paginator.get_page(page_number)
-          return render(request,'course/blog.html',{'categories':categories,'blogs':page_obj,'categories_with_course_count':categories_with_course_count})
-class ContactView(View):
-      def get(self, request):
-         return render(request, 'course/contact.html')
+    def get(self, request):
+        categories_with_course_count = Category.objects.annotate(course_count=Count('course'))
+        blogs = Blog.objects.all().order_by('-updated_at')
+        categories = Category.objects.all()
+        paginator = Paginator(blogs, 2)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'course/blog.html', {'categories': categories, 'blogs': page_obj,
+                                                    'categories_with_course_count': categories_with_course_count})
+
+
+class ContactView(FormView):
+    template_name = 'course/contact.html'
+    form_class = RequestForm
+    success_url = reverse_lazy('index')
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 class SingleView(View):
@@ -154,7 +172,6 @@ class SingleView(View):
             comment.blog = blog
             comment.save()
             return redirect('single', id=blog.id)
-
 
         categories_with_course_count = Category.objects.annotate(course_count=Count('course'))
         comments = Comment.objects.filter(blog=blog)
