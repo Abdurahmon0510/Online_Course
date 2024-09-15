@@ -7,7 +7,7 @@ from .models import User
 
 @admin.register(Teacher)
 class TeacherAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('full_name', 'joined')
+    list_display = ('full_name', 'joined','linkedin','skype','facebook')
     search_fields = ('first_name', 'last_name', 'phone', 'email')
     exclude = ('slug',)
 

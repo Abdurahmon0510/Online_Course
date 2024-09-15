@@ -131,7 +131,7 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
                     </div>
                 </div>
                 {% endfor %}
-                
+
             </div>
         </div>
     </div>
@@ -164,7 +164,7 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
                                 <div class="form-group">
                                     <input type="text" class="form-control border-0 p-4" placeholder="Your name" required="required" />
                                 </div>
-                                
+
                                <form action="{% url 'signup' %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
@@ -203,9 +203,24 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
             <div class="team-img position-relative">
                 <img class="img-fluid" src="{{ teacher.image.url }}" alt="">
                 <div class="team-social">
-                    <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-twitter"></i></a>
-                    <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <div class="teacher-info">
+    {% if teacher.linkedin %}
+        <a class="btn btn-outline-light btn-square mx-1" href="{{ teacher.linkedin }}" target="_blank">
+            <i class="fab fa-linkedin-in"></i>
+        </a>
+    {% endif %}
+    {% if teacher.skype %}
+        <a class="btn btn-outline-light btn-square mx-1" href="{{ teacher.skype }}" target="_blank">
+            <i class="fab fa-skype"></i>
+        </a>
+    {% endif %}
+    {% if teacher.facebook %}
+        <a class="btn btn-outline-light btn-square mx-1" href="{{ teacher.facebook }}" target="_blank">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+    {% endif %}
+</div>
+
                 </div>
             </div>
             <div class="bg-secondary p-4">
@@ -244,7 +259,7 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
                             <h5 class="m-0">{{ comment.name }}</h5>
                         </div>
                         {% endfor %}
-                        
+
                     </div>
                 </div>
             </div>
@@ -272,7 +287,7 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
                     </div>
                 </div>
                 {% endfor %}
-            
+
             </div>
         </div>
     </div>

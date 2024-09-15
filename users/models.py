@@ -24,6 +24,9 @@ class Teacher(BaseModel):
     image = models.ImageField(upload_to='users/', blank=True, null=True)
     slug = models.SlugField(unique=True, blank=True, null=True)
     course = models.ManyToManyField(Course, blank=True)
+    linkedin = models.URLField(blank=True, null=True)
+    skype = models.URLField(blank=True, null=True)
+    facebook = models.URLField(blank=True, null=True)
 
     @property
     def full_name(self):
