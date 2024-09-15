@@ -1,0 +1,10 @@
+{% extends 'course/base/base.html' %}
+
+{% block video_content %}
+  <h2>{{ video.name }}</h2>
+  <video width="640" height="360" controls>
+    <source src="{{ video.file.url }}" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <p>{{ video.description }}</p>
+{% endblock %}

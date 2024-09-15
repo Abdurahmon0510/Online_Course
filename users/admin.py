@@ -1,7 +1,7 @@
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 from import_export.formats import base_formats
-from .models import Teacher
+from .models import Teacher, Customer
 from .models import User
 
 
@@ -26,3 +26,6 @@ class UserAdmin(ImportExportModelAdmin, admin.ModelAdmin):
             base_formats.HTML
         )
         return [f for f in formats if f().can_import]
+
+
+admin.site.register(Customer)

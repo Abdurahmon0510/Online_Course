@@ -1,6 +1,11 @@
 from django.db import models
+from django.db.models import Avg, Sum
 from django.urls import reverse
 from django.utils.text import slugify
+from django.views.generic import ListView
+from moviepy.video.io.VideoFileClip import VideoFileClip
+from django.contrib.auth.models import User
+from config import settings
 
 
 class BaseModel(models.Model):
@@ -12,6 +17,13 @@ class BaseModel(models.Model):
 
 class Category(BaseModel):
     title = models.CharField(max_length=100, unique=True)
+    image = models.ImageField(upload_to='images/',default='course/img/cat-1.jpg')
+    slug = models.SlugField(max_length=100,null=True,blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super(Category, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -24,7 +36,7 @@ class Category(BaseModel):
 class Course(BaseModel):
     name = models.CharField(max_length=100)
     price = models.FloatField()
-    image = models.ImageField(upload_to='course', blank=True, null=True)
+    image = models.ImageField(upload_to='course/', blank=True, null=True)
     quantity = models.PositiveIntegerField(default=0, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     description = models.TextField()
@@ -39,14 +51,88 @@ class Course(BaseModel):
     def get_absolute_url(self):
         return reverse('course_detail', kwargs={'slug': self.slug})
 
+    @property
+    def average_rating(self):
+        videos = self.videos.all()
+        avg_rating = videos.aggregate(Avg('comments__rating'))['comments__rating__avg']
+        return avg_rating if avg_rating is not None else 0
+
+    def get_total_duration(self):
+
+        total_duration = self.videos.aggregate(Sum('duration'))['duration__sum'] or 0
+        hours, remainder = divmod(total_duration, 3600)
+        minutes, seconds = divmod(remainder, 60)
+
+        return f"{hours}h {minutes}m {seconds}s" if total_duration > 0 else "No videos"
+
     def __str__(self):
         return self.name
 
 class Video(BaseModel):
-    name = models.CharField(max_length=100)
-    duration = models.PositiveIntegerField()
-    file = models.FileField(upload_to='course', blank=True, null=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
+      name = models.CharField(max_length=100)
+      duration = models.PositiveIntegerField(null=True, blank=True)
+      file = models.FileField(upload_to='course', blank=True, null=True)
+      course = models.ForeignKey(Course, related_name='videos', on_delete=models.CASCADE, null=True, blank=True)
+      slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
+
+      def save(self, *args, **kwargs):
+          if not self.slug:
+              self.slug = slugify(self.name)
+          if self.file:
+              video = VideoFileClip(self.file.path)
+              duration_in_seconds = int(video.duration)
+              self.duration = duration_in_seconds
+              video.close()
+              super(Video, self).save(*args, **kwargs)
+
+
+      @property
+      def convert_duration(self):
+        seconds = self.duration
+
+        days = seconds // 86400
+        seconds %= 86400
+
+        hours = seconds // 3600
+        seconds %= 3600
+
+        minutes = seconds // 60
+        seconds %= 60
+
+
+        if days > 0:
+            return f"{days}d {hours}h {minutes}m"
+        elif hours > 0:
+            return f"{hours}h {minutes}m"
+        elif minutes > 0:
+            return f"{minutes}m"
+        else:
+            return f"{seconds}s"
+
+
+
+      @property
+      def average_rating(self):
+        avg_rating = self.comments.aggregate(Avg('rating'))['rating__avg']
+        return avg_rating if avg_rating is not None else 0
+
+
+class Blog(BaseModel):
+    title = models.CharField(max_length=255)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='blog_images/', blank=True, null=True)
+    is_published = models.BooleanField(default=False)
+    slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
+    author_bio = models.TextField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title
+
 
 class Comment(BaseModel):
     class RatingChoices(models.IntegerChoices):
@@ -60,9 +146,15 @@ class Comment(BaseModel):
     message = models.TextField(null=True, blank=True)
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='comments')
     user = models.CharField(max_length=100, null=True, blank=True)
+    slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
+    rating = models.PositiveIntegerField(choices=RatingChoices.choices, default=RatingChoices.zero)
+    image = models.ImageField(upload_to='comments/', blank=True, null=True)
+    blog = models.ForeignKey(Blog,parent_link='comment', on_delete=models.CASCADE, null=True, blank=True)
 
     def get_user(self):
         return self.user
+
+
 
 class Attribute(BaseModel):
     name = models.CharField(max_length=100, null=True, blank=True)

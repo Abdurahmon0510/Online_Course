@@ -1,9 +1,12 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 from django.utils.text import slugify
+
+from config import settings
 from course.models import Course
 from .managers import MyUserManager
 from django.contrib.auth.models import PermissionsMixin
+
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -11,6 +14,7 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
+
 
 class Teacher(BaseModel):
     first_name = models.CharField(max_length=100)
@@ -55,6 +59,7 @@ class Teacher(BaseModel):
         unique_together = (('first_name', 'last_name'),)
         ordering = ('first_name', 'last_name', 'phone')
 
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=100)
@@ -75,3 +80,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class Customer(BaseModel):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='customer_profile')
+    purchased_courses = models.ManyToManyField(Course, related_name='purchased_by')
+
+    def __str__(self):
+        return self.purchased_courses.__str__()

@@ -1,0 +1,10 @@
+{% extends 'course/base/base.html' %}
+
+{% block content %}
+  <h2>{{ course.name }} - Videolar</h2>
+  <ul>
+    {% for video in videos %}
+      <li><a href="{% url 'video_detail' video.pk %}">{{ video.name }}</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}

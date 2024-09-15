@@ -14,6 +14,7 @@ import os
 import environ
 from pathlib import Path
 
+from django.core.mail.backends.console import EmailBackend
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -39,6 +40,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,8 +49,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "users.apps.UsersConfig",
     "course.apps.CourseConfig",
+    'import_export',
+
 ]
 from config.jazzmin import JAZZMIN_SETTINGS
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -133,6 +138,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '/media')

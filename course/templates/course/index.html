@@ -16,7 +16,7 @@
                         <div class="p-5" style="width: 100%; max-width: 900px;">
                             <h5 class="text-white text-uppercase mb-md-3">Best Online Courses</h5>
                             <h1 class="display-3 text-white mb-md-4">Best Education From Your Home</h1>
-                            <a href="" class="btn btn-primary py-md-2 px-md-4 font-weight-semi-bold mt-2">Learn More</a>
+                            <a href="{% url 'about' %}" class="btn btn-primary py-md-2 px-md-4 font-weight-semi-bold mt-2">Learn More</a>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@ Practical, hands-on learning approaches
 Certification upon course completion
 Personalized learning experience for each student
 With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot Ta'lim be your path to success!</p>
-                    <a href="" class="btn btn-primary py-md-2 px-md-4 font-weight-semi-bold mt-2">Learn More</a>
+                    <a href="{% url 'about' %}" class="btn btn-primary py-md-2 px-md-4 font-weight-semi-bold mt-2">Learn More</a>
                 </div>
             </div>
         </div>
@@ -78,27 +78,28 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
 
 
     <!-- Category Start -->
-    <div class="container-fluid py-5">
-        <div class="{% static 'course/container pt-5 pb-3' %}">
-            <div class="text-center mb-5">
-                <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Subjects</h5>
-                <h1>Explore Top Subjects</h1>
-            </div>
-            <div class="row">
-                {% for category in categories %}
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="cat-item position-relative overflow-hidden rounded mb-2">
-                        <img class="img-fluid" src="{% static 'course/img/cat-1.jpg' %}" alt="">
-                        <a class="cat-overlay text-white text-decoration-none" href="">
-                            <h4 class="text-white font-weight-medium">Web Design</h4>
-                            <span>100 Courses</span>
-                        </a>
-                    </div>
+<div class="container-fluid py-5">
+    <div class="container pt-5 pb-3">
+        <div class="text-center mb-5">
+            <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Category</h5>
+            <h1>Explore Top Categories</h1>
+        </div>
+        <div class="row">
+            {% for category in categories_with_course_count %}
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="cat-item position-relative overflow-hidden rounded mb-2">
+                    <img class="img-fluid" src="{{ category.image.url }}" alt="">
+                    <a class="cat-overlay text-white text-decoration-none" href="{% url 'courses_with_slug' slug=category.slug %}">
+                        <h4 class="text-white font-weight-medium">{{ category.title }}</h4>
+                        <span>{{ category.course_count }} courses</span>
+                    </a>
                 </div>
-                {% endfor %}
             </div>
+            {% endfor %}
         </div>
     </div>
+</div>
+
     <!-- Category Start -->
 
 
@@ -110,114 +111,27 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
                 <h1>Our Popular Courses</h1>
             </div>
             <div class="row">
+                {% for course in courses %}
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="rounded overflow-hidden mb-2">
-                        <img class="img-fluid" src="img/course-1.jpg" alt="">
+                        <img class="img-fluid" src="{{ course.image.url }}" alt="">
                         <div class="bg-secondary p-4">
                             <div class="d-flex justify-content-between mb-3">
                                 <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>25 Students</small>
-                                <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>01h 30m</small>
+                                <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>{{ course.get_total_duration }}</small>
                             </div>
-                            <a class="h5" href="">Web design & development courses for beginner</a>
+                            <a class="h5" href="{% url 'course_videos' slug=course.slug %}">{{ course.name }}</a>
                             <div class="border-top mt-4 pt-4">
                                 <div class="d-flex justify-content-between">
-                                    <h6 class="m-0"><i class="fa fa-star text-primary mr-2"></i>4.5 <small>(250)</small></h6>
-                                    <h5 class="m-0">$99</h5>
+                                    <h6 class="m-0"><i class="fa fa-star text-primary mr-2"></i>{{ course.average_rating }}<small> ({{ course.comment_count }})</small></h6>
+                                    <h5 class="m-0">${{ course.price }}</h5>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="rounded overflow-hidden mb-2">
-                        <img class="img-fluid" src="img/course-2.jpg" alt="">
-                        <div class="bg-secondary p-4">
-                            <div class="d-flex justify-content-between mb-3">
-                                <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>25 Students</small>
-                                <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>01h 30m</small>
-                            </div>
-                            <a class="h5" href="">Web design & development courses for beginner</a>
-                            <div class="border-top mt-4 pt-4">
-                                <div class="d-flex justify-content-between">
-                                    <h6 class="m-0"><i class="fa fa-star text-primary mr-2"></i>4.5 <small>(250)</small></h6>
-                                    <h5 class="m-0">$99</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="rounded overflow-hidden mb-2">
-                        <img class="img-fluid" src="img/course-3.jpg" alt="">
-                        <div class="bg-secondary p-4">
-                            <div class="d-flex justify-content-between mb-3">
-                                <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>25 Students</small>
-                                <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>01h 30m</small>
-                            </div>
-                            <a class="h5" href="">Web design & development courses for beginner</a>
-                            <div class="border-top mt-4 pt-4">
-                                <div class="d-flex justify-content-between">
-                                    <h6 class="m-0"><i class="fa fa-star text-primary mr-2"></i>4.5 <small>(250)</small></h6>
-                                    <h5 class="m-0">$99</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="rounded overflow-hidden mb-2">
-                        <img class="img-fluid" src="img/course-4.jpg" alt="">
-                        <div class="bg-secondary p-4">
-                            <div class="d-flex justify-content-between mb-3">
-                                <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>25 Students</small>
-                                <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>01h 30m</small>
-                            </div>
-                            <a class="h5" href="">Web design & development courses for beginner</a>
-                            <div class="border-top mt-4 pt-4">
-                                <div class="d-flex justify-content-between">
-                                    <h6 class="m-0"><i class="fa fa-star text-primary mr-2"></i>4.5 <small>(250)</small></h6>
-                                    <h5 class="m-0">$99</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="rounded overflow-hidden mb-2">
-                        <img class="img-fluid" src="img/course-5.jpg" alt="">
-                        <div class="bg-secondary p-4">
-                            <div class="d-flex justify-content-between mb-3">
-                                <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>25 Students</small>
-                                <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>01h 30m</small>
-                            </div>
-                            <a class="h5" href="">Web design & development courses for beginner</a>
-                            <div class="border-top mt-4 pt-4">
-                                <div class="d-flex justify-content-between">
-                                    <h6 class="m-0"><i class="fa fa-star text-primary mr-2"></i>4.5 <small>(250)</small></h6>
-                                    <h5 class="m-0">$99</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="rounded overflow-hidden mb-2">
-                        <img class="img-fluid" src="img/course-6.jpg" alt="">
-                        <div class="bg-secondary p-4">
-                            <div class="d-flex justify-content-between mb-3">
-                                <small class="m-0"><i class="fa fa-users text-primary mr-2"></i>25 Students</small>
-                                <small class="m-0"><i class="far fa-clock text-primary mr-2"></i>01h 30m</small>
-                            </div>
-                            <a class="h5" href="">Web design & development courses for beginner</a>
-                            <div class="border-top mt-4 pt-4">
-                                <div class="d-flex justify-content-between">
-                                    <h6 class="m-0"><i class="fa fa-star text-primary mr-2"></i>4.5 <small>(250)</small></h6>
-                                    <h5 class="m-0">$99</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
+                
             </div>
         </div>
     </div>
@@ -233,13 +147,11 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
                         <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Need Any Courses</h5>
                         <h1 class="text-white">30% Off For New Students</h1>
                     </div>
-                    <p class="text-white">Invidunt lorem justo sanctus clita. Erat lorem labore ea, justo dolor lorem ipsum ut sed eos,
-                        ipsum et dolor kasd sit ea justo. Erat justo sed sed diam. Ea et erat ut sed diam sea ipsum est
-                        dolor</p>
+                    <p class="text-white">At Najot Ta'lim, we offer a wide variety of courses tailored to help you achieve your personal and professional goals. Whether you're looking to start a new career, enhance your skills, or simply learn something new, we've got you covered.</p>
                     <ul class="list-inline text-white m-0">
-                        <li class="py-2"><i class="fa fa-check text-primary mr-3"></i>Labore eos amet dolor amet diam</li>
-                        <li class="py-2"><i class="fa fa-check text-primary mr-3"></i>Etsea et sit dolor amet ipsum</li>
-                        <li class="py-2"><i class="fa fa-check text-primary mr-3"></i>Diam dolor diam elitripsum vero.</li>
+                        <li class="py-2"><i class="fa fa-check text-primary mr-3"></i>Comprehensive Course Selection: From beginner to advanced levels, covering fields like programming, design, marketing, business, and more.</li>
+                        <li class="py-2"><i class="fa fa-check text-primary mr-3"></i>Expert Instructors: Learn from industry professionals with real-world experience.</li>
+                        <li class="py-2"><i class="fa fa-check text-primary mr-3"></i>Flexible Learning: Study at your own pace, from anywhere, at any time.</li>
                     </ul>
                 </div>
                 <div class="col-lg-5">
@@ -252,20 +164,21 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
                                 <div class="form-group">
                                     <input type="text" class="form-control border-0 p-4" placeholder="Your name" required="required" />
                                 </div>
-                                <div class="form-group">
-                                    <input type="email" class="form-control border-0 p-4" placeholder="Your email" required="required" />
-                                </div>
-                                <div class="form-group">
-                                    <select class="custom-select border-0 px-4" style="height: 47px;">
-                                        <option selected>Select a course</option>
-                                        <option value="1">Course 1</option>
-                                        <option value="2">Course 1</option>
-                                        <option value="3">Course 1</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <button class="btn btn-dark btn-block border-0 py-3" type="submit">Sign Up Now</button>
-                                </div>
+                                
+                               <form action="{% url 'signup' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="form-group">
+        <select class="custom-select border-0 px-4" style="height: 47px;" name="course">
+            <option selected>Select a course</option>
+            {% for course in courses %}
+                <option value="{{ course.id }}">{{ course.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button class="btn btn-dark btn-block border-0 py-3" type="submit">Sign Up Now</button>
+</form>
+
                             </form>
                         </div>
                     </div>
@@ -283,72 +196,31 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
                 <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Teachers</h5>
                 <h1>Meet Our Teachers</h1>
             </div>
-            <div class="row">
-                <div class="col-md-6 col-lg-3 text-center team mb-4">
-                    <div class="team-item rounded overflow-hidden mb-2">
-                        <div class="team-img position-relative">
-                            <img class="img-fluid" src="img/team-1.jpg" alt="">
-                            <div class="team-social">
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-                        <div class="bg-secondary p-4">
-                            <h5>Jhon Doe</h5>
-                            <p class="m-0">Web Designer</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3 text-center team mb-4">
-                    <div class="team-item rounded overflow-hidden mb-2">
-                        <div class="team-img position-relative">
-                            <img class="img-fluid" src="img/team-2.jpg" alt="">
-                            <div class="team-social">
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-                        <div class="bg-secondary p-4">
-                            <h5>Jhon Doe</h5>
-                            <p class="m-0">Web Designer</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3 text-center team mb-4">
-                    <div class="team-item rounded overflow-hidden mb-2">
-                        <div class="team-img position-relative">
-                            <img class="img-fluid" src="img/team-3.jpg" alt="">
-                            <div class="team-social">
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-                        <div class="bg-secondary p-4">
-                            <h5>Jhon Doe</h5>
-                            <p class="m-0">Web Designer</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3 text-center team mb-4">
-                    <div class="team-item rounded overflow-hidden mb-2">
-                        <div class="team-img position-relative">
-                            <img class="img-fluid" src="img/team-4.jpg" alt="">
-                            <div class="team-social">
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-                        <div class="bg-secondary p-4">
-                            <h5>Jhon Doe</h5>
-                            <p class="m-0">Web Designer</p>
-                        </div>
-                    </div>
+           <div class="row">
+    {% for teacher in teachers %}
+    <div class="col-md-6 col-lg-3 text-center team mb-4">
+        <div class="team-item rounded overflow-hidden mb-2">
+            <div class="team-img position-relative">
+                <img class="img-fluid" src="{{ teacher.image.url }}" alt="">
+                <div class="team-social">
+                    <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-twitter"></i></a>
+                    <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-outline-light btn-square mx-1" href="#"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
+            <div class="bg-secondary p-4">
+                <h5>{{ teacher.full_name }}</h5>
+                <p class="m-0">
+                    {% for course in teacher.course.all %}
+                        {{ course.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
         </div>
     </div>
     <!-- Team End -->
@@ -359,32 +231,20 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
         <div class="container py-5">
             <div class="text-center mb-5">
                 <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Testimonial</h5>
-                <h1>What Say Our Students</h1>
+                <h1>What Say Our Users</h1>
             </div>
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="owl-carousel testimonial-carousel">
+                        {% for comment in comments %}
                         <div class="text-center">
                             <i class="fa fa-3x fa-quote-left text-primary mb-4"></i>
-                            <h4 class="font-weight-normal mb-4">Dolor eirmod diam stet kasd sed. Aliqu rebum est eos. Rebum elitr dolore et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</h4>
-                            <img class="img-fluid mx-auto mb-3" src="img/testimonial-1.jpg" alt="">
-                            <h5 class="m-0">Client Name</h5>
-                            <span>Profession</span>
+                            <h4 class="font-weight-normal mb-4">{{ comment.message }}</h4>
+                            <img class="img-fluid mx-auto mb-3" src="{{ comment.image.url }}" alt="">
+                            <h5 class="m-0">{{ comment.name }}</h5>
                         </div>
-                        <div class="text-center">
-                            <i class="fa fa-3x fa-quote-left text-primary mb-4"></i>
-                            <h4 class="font-weight-normal mb-4">Dolor eirmod diam stet kasd sed. Aliqu rebum est eos. Rebum elitr dolore et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</h4>
-                            <img class="img-fluid mx-auto mb-3" src="img/testimonial-2.jpg" alt="">
-                            <h5 class="m-0">Client Name</h5>
-                            <span>Profession</span>
-                        </div>
-                        <div class="text-center">
-                            <i class="fa fa-3x fa-quote-left text-primary mb-4"></i>
-                            <h4 class="font-weight-normal mb-4">Dolor eirmod diam stet kasd sed. Aliqu rebum est eos. Rebum elitr dolore et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</h4>
-                            <img class="img-fluid mx-auto mb-3" src="img/testimonial-3.jpg" alt="">
-                            <h5 class="m-0">Client Name</h5>
-                            <span>Profession</span>
-                        </div>
+                        {% endfor %}
+                        
                     </div>
                 </div>
             </div>
@@ -401,33 +261,18 @@ With Najot Ta'lim, you can advance your knowledge and gain new skills. Let Najot
                 <h1>Latest From Our Blog</h1>
             </div>
             <div class="row pb-3">
+                {% for blog in blogs %}
                 <div class="col-lg-4 mb-4">
                     <div class="blog-item position-relative overflow-hidden rounded mb-2">
-                        <img class="img-fluid" src="img/blog-1.jpg" alt="">
+                        <img class="img-fluid" src="{{ blog.image.url }}" alt="">
                         <a class="blog-overlay text-decoration-none" href="">
-                            <h5 class="text-white mb-3">Lorem elitr magna stet eirmod labore amet labore clita at ut clita</h5>
-                            <p class="text-primary m-0">Jan 01, 2050</p>
+                            <h5 class="text-white mb-3">{{ blog.title }}</h5>
+                            <p class="text-primary m-0">{{ blog.updated_at }}</p>
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-4 mb-4">
-                    <div class="blog-item position-relative overflow-hidden rounded mb-2">
-                        <img class="img-fluid" src="img/blog-2.jpg" alt="">
-                        <a class="blog-overlay text-decoration-none" href="">
-                            <h5 class="text-white mb-3">Lorem elitr magna stet eirmod labore amet labore clita at ut clita</h5>
-                            <p class="text-primary m-0">Jan 01, 2050</p>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-4 mb-4">
-                    <div class="blog-item position-relative overflow-hidden rounded mb-2">
-                        <img class="img-fluid" src="img/blog-3.jpg" alt="">
-                        <a class="blog-overlay text-decoration-none" href="">
-                            <h5 class="text-white mb-3">Lorem elitr magna stet eirmod labore amet labore clita at ut clita</h5>
-                            <p class="text-primary m-0">Jan 01, 2050</p>
-                        </a>
-                    </div>
-                </div>
+                {% endfor %}
+            
             </div>
         </div>
     </div>

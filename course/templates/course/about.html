@@ -29,8 +29,24 @@
                         <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">About Us</h5>
                         <h1>Innovative Way To Learn</h1>
                     </div>
-                    <p>Aliquyam accusam clita nonumy ipsum sit sea clita ipsum clita, ipsum dolores amet voluptua duo dolores et sit ipsum rebum, sadipscing et erat eirmod diam kasd labore clita est. Diam sanctus gubergren sit rebum clita amet, sea est sea vero sed et. Sadipscing labore tempor at sit dolor clita consetetur diam. Diam ut diam tempor no et, lorem dolore invidunt no nonumy stet ea labore, dolor justo et sit gubergren diam sed sed no ipsum. Sit tempor ut nonumy elitr dolores justo aliquyam ipsum stet</p>
-                    <a href="" class="btn btn-primary py-md-2 px-md-4 font-weight-semi-bold mt-2">Learn More</a>
+                    <p>
+
+Introduction
+
+Najot Ta'lim is a premier educational institution dedicated to providing high-quality learning experiences tailored to the needs of individuals and organizations. Our mission is to empower learners with the knowledge and skills they need to succeed in today’s dynamic and ever-evolving world. With a commitment to excellence, innovation, and inclusivity, Najot Ta'lim stands as a beacon of educational advancement and personal growth.
+
+Our Vision and Mission
+
+At Najot Ta'lim, our vision is to create a global community of learners who are equipped to tackle the challenges of the future with confidence and competence. Our mission is to deliver exceptional educational programs that foster critical thinking, creativity, and lifelong learning. We strive to offer a diverse range of courses and training that cater to various interests and professional goals.
+
+Comprehensive Course Offerings
+
+We offer a wide array of courses designed to meet the needs of learners from different backgrounds and career stages. Our curriculum spans various fields, including:
+
+Technology and Programming: Courses in software development, data science, cybersecurity, and more.
+Business and Management: Training in project management, entrepreneurship, leadership, and strategic planning.
+Design and Creativity: Programs in graphic design, web design, multimedia arts, and more.
+                        Personal Development: Workshops and courses on communication skills, time management, and career development.</p>
                 </div>
             </div>
         </div>
@@ -95,32 +111,20 @@
         <div class="container py-5">
             <div class="text-center mb-5">
                 <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 5px;">Testimonial</h5>
-                <h1>What Say Our Students</h1>
+                <h1>What Say Our Users</h1>
             </div>
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="owl-carousel testimonial-carousel">
+                        {% for comment in comments %}
                         <div class="text-center">
                             <i class="fa fa-3x fa-quote-left text-primary mb-4"></i>
-                            <h4 class="font-weight-normal mb-4">Dolor eirmod diam stet kasd sed. Aliqu rebum est eos. Rebum elitr dolore et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</h4>
-                            <img class="img-fluid mx-auto mb-3" src="{% static 'course/img/testimonial-1.jpg' %}" alt="">
-                            <h5 class="m-0">Client Name</h5>
-                            <span>Profession</span>
+                            <h4 class="font-weight-normal mb-4">{{ comment.message }}</h4>
+                            <img class="img-fluid mx-auto mb-3" src="{{ comment.image.url }}" alt="">
+                            <h5 class="m-0">{{ comment.name }}</h5>
                         </div>
-                        <div class="text-center">
-                            <i class="fa fa-3x fa-quote-left text-primary mb-4"></i>
-                            <h4 class="font-weight-normal mb-4">Dolor eirmod diam stet kasd sed. Aliqu rebum est eos. Rebum elitr dolore et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</h4>
-                            <img class="img-fluid mx-auto mb-3" src="{%  static 'course/img/testimonial-2.jpg' %}" alt="">
-                            <h5 class="m-0">Client Name</h5>
-                            <span>Profession</span>
-                        </div>
-                        <div class="text-center">
-                            <i class="fa fa-3x fa-quote-left text-primary mb-4"></i>
-                            <h4 class="font-weight-normal mb-4">Dolor eirmod diam stet kasd sed. Aliqu rebum est eos. Rebum elitr dolore et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</h4>
-                            <img class="img-fluid mx-auto mb-3" src="{% static 'course/img/testimonial-3.jpg' %}" alt="">
-                            <h5 class="m-0">Client Name</h5>
-                            <span>Profession</span>
-                        </div>
+                        {% endfor %}
+                        
                     </div>
                 </div>
             </div>
