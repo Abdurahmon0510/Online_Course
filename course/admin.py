@@ -1,6 +1,6 @@
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
-from .models import Category, Course, Comment, Video, Blog
+from .models import Category, Course, Comment, Video, Blog, Request
 
 
 @admin.register(Course)
@@ -38,6 +38,12 @@ class BlogAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
     fields = ['title', 'content', 'image', 'author', 'slug','category','is_published','author_bio','author_name','author_image']
     list_display = ['title', 'author', 'slug', 'category', 'is_published']
+
+@admin.register(Request)
+class RequestAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+
+    fields = ['name', 'message', 'subject', 'email']
+    list_display = ['name', 'message', 'subject', 'email']
 
 
 
